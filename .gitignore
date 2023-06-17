@@ -13,3 +13,4 @@ venv.bak/
 .pyre/
 /.vscode/
 /.idea/
+.pytest_cache
