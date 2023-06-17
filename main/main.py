@@ -4,7 +4,7 @@ from operator import itemgetter
 import os
 
 
-path = os.path.join('../operations.json')
+path = os.path.join('./operations.json')
 
 
 def read_(file_path):
@@ -21,8 +21,17 @@ def get_the_last_5(operations: list):
         if 'date' in i.keys() and i['state'] == 'EXECUTED':
             correct_date = str(i['date']).replace('T', ' ', 1)
             i['date'] = datetime.datetime.strptime(correct_date, '%Y-%m-%d %H:%M:%S.%f')
-            if 'from' in i.keys() and i['from'].startswith('Счет'):
-                i['from'] = 'Счет **' + i['from'][-4:-1]
+            if 'from' in i.keys():
+                if i['from'].startswith('Счет'):
+                    i['from'] = 'Счет **' + i['from'][-4:]
+                else:
+                    i['from'] = f'{i["from"][-16:-12]} {i["from"][-12:-10]}** **** {i["from"][-4:]}'
+            if 'to' in i.keys():
+                if i['to'].startswith('Счет'):
+                    i['to'] = 'Счет **' + i['to'][-4:]
+                else:
+                    i['to'] = f'{i["to"][-16:-12]} {i["to"][-12:-10]}** **** {i["to"][-4:]}'
+
             correct_operations.append(i)
     return sorted(correct_operations, key=itemgetter('date'), reverse=True)[0:5]
 
@@ -35,16 +44,18 @@ def pretty_result(operations: list):
     <откуда> -> <куда>
     <сумма перевода> <валюта>"""
     keys = ['id', 'state', 'date', 'operationAmount', 'description', 'from', 'to']
+    result = []
     for i in operations:
         date = i['date'].strftime("%d.%m.%Y")
 
         for k in keys:
             if k not in i.keys():
                 i[k] = ""
-        print(f'{date} {i["description"]}\n'
-              f'{i["from"]} -> {i["to"]}\n'
-              f'{i["operationAmount"]["amount"]} {i["operationAmount"]["currency"]["name"]}\n')
+        operation = f'{date} {i["description"]}\n{i["from"]} -> {i["to"]}\n' \
+                    f'{i["operationAmount"]["amount"]} {i["operationAmount"]["currency"]["name"]}\n'
+        result.append(operation)
+    return result
 
 
-result = get_the_last_5(read_(path))
-pretty_result(result)
+last_operations = get_the_last_5(read_(path))
+[print(i) for i in pretty_result(last_operations)]
