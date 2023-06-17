@@ -19,5 +19,6 @@ first_operation = {
 
 
 def test_read():
-    assert type(read_('../operations.json')) == list
-    assert read_('../operations.json')[0] == first_operation
+    assert type(read_('./operations.json')) == list
+    assert read_('./operations.json')[0] == first_operation
+    assert type(read_('./operations.json')[0]) == dict
