@@ -25,12 +25,18 @@ def get_the_last_5(operations: list):
                 if i['from'].startswith('Счет'):
                     i['from'] = 'Счет **' + i['from'][-4:]
                 else:
-                    i['from'] = f'{i["from"][-16:-12]} {i["from"][-12:-10]}** **** {i["from"][-4:]}'
+                    card = i['from'].split(' ')
+                    card_num = card[-1]
+                    del card[-1]
+                    i['from'] = f'{" ".join(card)} {card_num[-16:-12]} {card_num[-12:-10]}** **** {card_num[-4:]}'
             if 'to' in i.keys():
                 if i['to'].startswith('Счет'):
                     i['to'] = 'Счет **' + i['to'][-4:]
                 else:
-                    i['to'] = f'{i["to"][-16:-12]} {i["to"][-12:-10]}** **** {i["to"][-4:]}'
+                    card = i['to'].split(' ')
+                    card_num = card[-1]
+                    del card[-1]
+                    i['to'] = f'{" ".join(card)} {card_num[-16:-12]} {card_num[-12:-10]}** **** {card_num[-4:]}'
 
             correct_operations.append(i)
     return sorted(correct_operations, key=itemgetter('date'), reverse=True)[0:5]
@@ -57,5 +63,5 @@ def pretty_result(operations: list):
     return result
 
 
-last_operations = get_the_last_5(read_(path))
-[print(i) for i in pretty_result(last_operations)]
+# last_operations = get_the_last_5(read_(path))
+# [print(i) for i in pretty_result(last_operations)]
